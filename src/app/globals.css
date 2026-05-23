@@ -1,26 +1,168 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+
+  --radius-sm: calc(var(--radius) * 0.65);
+  --radius-md: calc(var(--radius) * 0.85);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.25);
+  --radius-2xl: calc(var(--radius) * 1.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root,
+.dark {
+  --background: #080a0f;
+  --foreground: #f2f5f9;
+
+  --card: #10141d;
+  --card-foreground: #e9edf5;
+
+  --popover: #111722;
+  --popover-foreground: #e9edf5;
+
+  --primary: #5fa4ff;
+  --primary-foreground: #f5f9ff;
+
+  --secondary: #141b27;
+  --secondary-foreground: #c3cbda;
+
+  --muted: #101722;
+  --muted-foreground: #8a94a8;
+
+  --accent: #172131;
+  --accent-foreground: #d0daea;
+
+  --destructive: #ff6f4a;
+  --border: rgb(166 184 212 / 14%);
+  --input: rgb(166 184 212 / 18%);
+  --ring: #6eb3ff;
+
+  --sidebar: #0d131d;
+  --sidebar-foreground: #cfd6e5;
+  --sidebar-primary: #5fa4ff;
+  --sidebar-primary-foreground: #f5f9ff;
+  --sidebar-accent: #121a27;
+  --sidebar-accent-foreground: #cfd6e5;
+  --sidebar-border: rgb(166 184 212 / 14%);
+  --sidebar-ring: #6eb3ff;
+
+  --chart-1: #5fa4ff;
+  --chart-2: #38bdf8;
+  --chart-3: #34d399;
+  --chart-4: #f59e0b;
+  --chart-5: #fb7185;
+
+  --radius: 0.7rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background-color: #080a0f;
+    background-image: radial-gradient(circle at 10% -10%, rgb(70 132 221 / 15%) 0%, transparent 40%);
+    min-height: 100svh;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .surface-panel {
+    background: linear-gradient(180deg, rgb(16 20 29 / 85%) 0%, rgb(12 16 24 / 85%) 100%);
+    border: 1px solid rgb(166 184 212 / 14%);
+    box-shadow:
+      0 8px 30px rgb(3 6 10 / 36%),
+      inset 0 1px 0 rgb(255 255 255 / 4%);
+  }
+
+  .surface-elevated {
+    background: linear-gradient(180deg, rgb(20 27 39 / 94%) 0%, rgb(16 22 33 / 94%) 100%);
+    border: 1px solid rgb(166 184 212 / 18%);
+    box-shadow: 0 16px 44px rgb(2 4 10 / 44%);
+  }
+
+  .text-tertiary {
+    color: #6d778b;
+  }
+
+  .text-secondary {
+    color: #99a3b6;
+  }
+
+  .ring-focus {
+    box-shadow: 0 0 0 1px rgb(95 164 255 / 45%), 0 0 0 4px rgb(95 164 255 / 20%);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(144 163 191 / 26%);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(144 163 191 / 36%);
 }
