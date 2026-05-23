@@ -20,6 +20,8 @@ import type {
   Workspace,
 } from "./types";
 
+const DEMO_MODE_ENABLED = process.env.NEXT_PUBLIC_VEYN_DEMO_MODE !== "false";
+
 interface RoomSettings {
   showLabels: boolean;
   showZones: boolean;
@@ -75,6 +77,9 @@ interface RoomStore {
 
   timelineCursor: number;
   setTimelineCursor: (timelineCursor: number) => void;
+  replayBaselineAgents: Agent[];
+  captureReplayBaseline: () => void;
+  restoreReplayBaseline: () => void;
 
   roomSettings: RoomSettings;
   updateRoomSettings: (updates: Partial<RoomSettings>) => void;
@@ -258,6 +263,15 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
 
   timelineCursor: Date.now(),
   setTimelineCursor: (timelineCursor) => set({ timelineCursor }),
+  replayBaselineAgents: DEMO_AGENTS.map((agent) => ({ ...agent, position: { ...agent.position } })),
+  captureReplayBaseline: () =>
+    set((state) => ({
+      replayBaselineAgents: state.agents.map((agent) => ({ ...agent, position: { ...agent.position } })),
+    })),
+  restoreReplayBaseline: () =>
+    set((state) => ({
+      agents: state.replayBaselineAgents.map((agent) => ({ ...agent, position: { ...agent.position } })),
+    })),
 
   roomSettings: {
     showLabels: true,
@@ -286,7 +300,7 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
   currentRun: DEMO_RUN,
   setCurrentRun: (currentRun) => set({ currentRun }),
 
-  isDemoMode: true,
+  isDemoMode: DEMO_MODE_ENABLED,
   setDemoMode: (isDemoMode) => set({ isDemoMode }),
 
   commandMenuOpen: false,
@@ -380,6 +394,10 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
 export function applyReplaySnapshot(cursorTime: number) {
   const state = useRoomStore.getState();
   const cursor = new Date(cursorTime).getTime();
+  const baselineAgents =
+    state.replayBaselineAgents.length > 0
+      ? state.replayBaselineAgents.map((agent) => ({ ...agent, position: { ...agent.position } }))
+      : state.agents.map((agent) => ({ ...agent, position: { ...agent.position } }));
   const byAgent = new Map<string, AgentEvent>();
 
   for (const event of state.events) {
@@ -395,7 +413,7 @@ export function applyReplaySnapshot(cursorTime: number) {
   if (byAgent.size === 0) return;
 
   useRoomStore.setState({
-    agents: state.agents.map((agent) => {
+    agents: baselineAgents.map((agent) => {
       const event = byAgent.get(agent.id);
       if (!event) return agent;
 
@@ -417,6 +435,23 @@ export function applyReplaySnapshot(cursorTime: number) {
             : "thinking",
         currentTask: event.task ?? agent.currentTask,
         currentTool: event.tool ?? agent.currentTool,
+        zone: typeof event.metadata?.zone === "string" ? (event.metadata.zone as AgentZone) : agent.zone,
+        progress: typeof event.metadata?.progress === "number" ? event.metadata.progress : agent.progress,
+        position:
+          event.metadata &&
+          typeof event.metadata === "object" &&
+          "position" in event.metadata &&
+          event.metadata.position &&
+          typeof event.metadata.position === "object" &&
+          typeof (event.metadata.position as { x?: unknown }).x === "number" &&
+          typeof (event.metadata.position as { y?: unknown }).y === "number" &&
+          typeof (event.metadata.position as { z?: unknown }).z === "number"
+            ? {
+                x: (event.metadata.position as { x: number }).x,
+                y: (event.metadata.position as { y: number }).y,
+                z: (event.metadata.position as { z: number }).z,
+              }
+            : agent.position,
         lastEventAt: event.timestamp,
       };
     }),
@@ -438,6 +473,7 @@ export function createAgentEventFromStatus(agent: Agent, status: AgentStatus): A
     metadata: {
       zone: agent.zone,
       progress: agent.progress,
+      position: agent.position,
     },
     timestamp: nowIso(),
   };

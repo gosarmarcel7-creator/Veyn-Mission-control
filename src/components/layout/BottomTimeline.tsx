@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pause, Play, RotateCcw, SkipBack } from "lucide-react";
 import { useRoomStore, applyReplaySnapshot } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -17,12 +17,15 @@ export function BottomTimeline() {
     setReplayMode,
     timelineCursor,
     setTimelineCursor,
+    captureReplayBaseline,
+    restoreReplayBaseline,
     currentRun,
     events,
     agents,
   } = useRoomStore();
 
   const [speed, setSpeed] = useState(1);
+  const [replayPlaying, setReplayPlaying] = useState(false);
   const [agentFilter, setAgentFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [toolFilter, setToolFilter] = useState("all");
@@ -49,13 +52,52 @@ export function BottomTimeline() {
   }, [events, agentFilter, statusFilter, toolFilter]);
 
   const cursorPercent = Math.max(0, Math.min(100, ((timelineCursor - runStart) / duration) * 100));
+  const lastTickRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!replayMode || liveMode || !replayPlaying) {
+      lastTickRef.current = null;
+      return;
+    }
+
+    let rafId = 0;
+    const tick = (now: number) => {
+      if (lastTickRef.current === null) {
+        lastTickRef.current = now;
+      }
+      const elapsed = now - (lastTickRef.current ?? now);
+      lastTickRef.current = now;
+
+      const delta = elapsed * speed;
+      const nextCursor = Math.min(runEnd, timelineCursor + delta);
+      setTimelineCursor(nextCursor);
+      applyReplaySnapshot(nextCursor);
+
+      if (nextCursor >= runEnd) {
+        setReplayPlaying(false);
+        return;
+      }
+
+      rafId = window.requestAnimationFrame(tick);
+    };
+
+    rafId = window.requestAnimationFrame(tick);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+    };
+  }, [replayMode, liveMode, replayPlaying, speed, runEnd, timelineCursor, setTimelineCursor]);
 
   const onScrub = (clientX: number, rect: DOMRect) => {
     const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     const nextCursor = Math.floor(runStart + ratio * duration);
+    if (liveMode) {
+      captureReplayBaseline();
+    }
     setTimelineCursor(nextCursor);
     setReplayMode(true);
     setLiveMode(false);
+    setReplayPlaying(false);
     applyReplaySnapshot(nextCursor);
   };
 
@@ -68,8 +110,10 @@ export function BottomTimeline() {
             variant={liveMode ? "default" : "outline"}
             className={cn("h-7", liveMode ? "bg-emerald-500/80 text-[#07120d] hover:bg-emerald-400" : "border-white/15 bg-white/[0.03]")}
             onClick={() => {
+              restoreReplayBaseline();
               setLiveMode(true);
               setReplayMode(false);
+              setReplayPlaying(false);
             }}
           >
             Live
@@ -79,8 +123,13 @@ export function BottomTimeline() {
             variant={replayMode ? "default" : "outline"}
             className={cn("h-7", replayMode ? "bg-sky-500/80 text-[#07121b] hover:bg-sky-400" : "border-white/15 bg-white/[0.03]")}
             onClick={() => {
+              if (liveMode) {
+                captureReplayBaseline();
+              }
               setReplayMode(true);
               setLiveMode(false);
+              setReplayPlaying(false);
+              applyReplaySnapshot(timelineCursor);
             }}
           >
             Replay
@@ -93,16 +142,17 @@ export function BottomTimeline() {
           className="h-7 w-7"
           onClick={() => {
             if (liveMode) {
+              captureReplayBaseline();
               setLiveMode(false);
               setReplayMode(true);
+              setReplayPlaying(true);
             } else {
-              setLiveMode(true);
-              setReplayMode(false);
+              setReplayPlaying((value) => !value);
             }
           }}
-          aria-label={liveMode ? "Pause live" : "Resume live"}
+          aria-label={liveMode || replayPlaying ? "Pause live or replay" : "Resume replay"}
         >
-          {liveMode ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+          {liveMode || replayPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </Button>
 
         <Button
@@ -110,9 +160,13 @@ export function BottomTimeline() {
           size="icon"
           className="h-7 w-7"
           onClick={() => {
+            if (liveMode) {
+              captureReplayBaseline();
+            }
             setTimelineCursor(runStart);
             setReplayMode(true);
             setLiveMode(false);
+            setReplayPlaying(false);
             applyReplaySnapshot(runStart);
           }}
           aria-label="Jump to beginning"

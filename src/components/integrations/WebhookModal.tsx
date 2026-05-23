@@ -37,12 +37,16 @@ const WEBHOOK_PAYLOAD = `{
 }`;
 
 export function WebhookModal({ provider, open, onClose }: WebhookModalProps) {
-  const endpoint = useMemo(() => {
-    if (typeof window === "undefined") return "https://app.veyn.io/api/ingest/ws_demo/wh_demo";
-    return `${window.location.origin}/api/ingest/ws_demo/wh_demo`;
-  }, []);
+  const workspaceId = process.env.NEXT_PUBLIC_VEYN_WORKSPACE_ID ?? "ws_demo";
+  const webhookId = process.env.NEXT_PUBLIC_VEYN_WEBHOOK_ID ?? "wh_demo";
+  const signingSecret = process.env.NEXT_PUBLIC_VEYN_WEBHOOK_SECRET_HINT ?? "configured server-side";
 
-  const signingSecret = "whsec_demo_2f8cf7c1";
+  const endpoint = useMemo(() => {
+    if (typeof window === "undefined") {
+      return `https://app.veyn.io/api/ingest/${workspaceId}/${webhookId}`;
+    }
+    return `${window.location.origin}/api/ingest/${workspaceId}/${webhookId}`;
+  }, [workspaceId, webhookId]);
 
   const curlExample = `curl -X POST ${endpoint} \\
   -H \"Content-Type: application/json\" \\

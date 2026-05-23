@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Agent Mission Control
 
-## Getting Started
-
-First, run the development server:
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production Mode
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The UI supports demo and production mode.
 
-## Learn More
+- Demo mode is on by default.
+- Set `NEXT_PUBLIC_VEYN_DEMO_MODE=false` to run in production mode.
 
-To learn more about Next.js, take a look at the following resources:
+## Required Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Add these in your hosting platform (Vercel/Render/Fly/etc):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# client mode flag
+NEXT_PUBLIC_VEYN_DEMO_MODE=false
 
-## Deploy on Vercel
+# webhook UI defaults
+NEXT_PUBLIC_VEYN_WORKSPACE_ID=ws_your_workspace
+NEXT_PUBLIC_VEYN_WEBHOOK_ID=wh_your_webhook
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# optional hint shown in UI (never place your real secret in NEXT_PUBLIC vars)
+NEXT_PUBLIC_VEYN_WEBHOOK_SECRET_HINT=stored-in-server-secret-manager
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## What Must Be Wired For Real Production
+
+This repo still includes demo-backed storage and provider test stubs. For full production use by everyone, wire these pieces:
+
+1. Replace `mockDb` in `src/lib/mock-db.ts` and API routes under `src/app/api/*` with a real database.
+2. Add authentication and workspace tenancy (user -> workspace mapping, RBAC).
+3. Encrypt provider credentials server-side (KMS/secret manager), never in public env vars.
+4. Implement real provider adapter tests in `src/lib/adapters/*` (OpenAI/Anthropic/GitHub/Vercel/LangGraph).
+5. Add realtime broadcast for ingested events (WebSocket/SSE/Supabase Realtime).
+6. Persist and query timeline/replay events per run from the database.
+7. Add background processing/retries/dead-letter handling for webhook ingest.
+8. Add observability: request logs, error tracking, metrics, and alerting.
+
+## Replay Notes
+
+Replay now supports deterministic scrubbing from a captured baseline and live restore when leaving replay mode.
+
+## Build And Run
+
+```bash
+npm run lint
+npm run build
+npm run start
+```
