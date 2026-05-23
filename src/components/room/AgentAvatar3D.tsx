@@ -53,7 +53,13 @@ function useAssetExists(path: string) {
 
 function AvatarModel({ path }: { path: string }) {
   const gltf = useGLTF(path);
-  const scene = useMemo(() => clone(gltf.scene), [gltf.scene]);
+  const scene = useMemo(() => {
+    const cloned = clone(gltf.scene);
+    cloned.traverse((object) => {
+      object.frustumCulled = false;
+    });
+    return cloned;
+  }, [gltf.scene]);
   return <primitive object={scene} scale={0.88} position={[0, 0, 0]} />;
 }
 
@@ -102,6 +108,7 @@ export function AgentAvatar3D({ agent, selected, showLabels, onSelect }: AgentAv
   return (
     <group
       ref={groupRef}
+      frustumCulled={false}
       position={[agent.position.x, agent.position.y, agent.position.z]}
       onPointerOver={(event) => {
         event.stopPropagation();

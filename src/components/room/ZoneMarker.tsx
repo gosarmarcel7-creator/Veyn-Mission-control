@@ -1,4 +1,5 @@
 import { Html } from "@react-three/drei";
+import * as THREE from "three";
 
 interface ZoneMarkerProps {
   label: string;
@@ -11,7 +12,7 @@ export function ZoneMarker({ label, position, color }: ZoneMarkerProps) {
     <group position={position}>
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[2.2, 0.62]} />
-        <meshStandardMaterial color={color} transparent opacity={0.12} />
+        <meshStandardMaterial color={color} transparent opacity={0.12} side={THREE.DoubleSide} />
       </mesh>
       <Html position={[0, 0.18, 0]} center>
         <div
