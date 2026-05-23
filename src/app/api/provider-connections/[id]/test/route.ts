@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 import { PROVIDER_ADAPTERS } from "@/lib/adapters";
 
 export async function POST(
@@ -7,7 +7,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const connection = mockDb.getConnections().find((entry) => entry.id === id);
+  const connection = (await dataStore.listConnections()).find((entry) => entry.id === id);
 
   if (!connection) {
     return NextResponse.json({ error: "Connection not found" }, { status: 404 });

@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { WebhookIngestSchema } from "@/lib/schemas";
 import { CustomWebhookAdapter } from "@/lib/adapters";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 
 function verifySignature(payload: string, signatureHeader: string | null, secret: string) {
   if (!secret) return true;
@@ -24,7 +24,7 @@ export async function POST(
 
   const rawPayload = await request.text();
   const signature = request.headers.get("x-veyn-signature") ?? request.headers.get("x-hub-signature-256");
-  const secret = mockDb.getWebhookSecret(workspaceId, webhookId);
+  const secret = await dataStore.getWebhookSecret(workspaceId, webhookId);
 
   if (!verifySignature(rawPayload, signature, secret)) {
     return NextResponse.json({ error: "Invalid webhook signature" }, { status: 401 });
@@ -53,9 +53,9 @@ export async function POST(
     timestamp: validated.data.timestamp ?? new Date().toISOString(),
   });
 
-  const stored = mockDb.addEvent(normalized);
+  const stored = await dataStore.addEvent(normalized);
 
-  const updatedAgent = mockDb.updateAgent(normalized.agentId, {
+  const updatedAgent = await dataStore.updateAgent(normalized.agentId, {
     currentTask: normalized.task,
     currentTool: normalized.tool,
     status:

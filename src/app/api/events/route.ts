@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
@@ -7,11 +7,7 @@ export async function GET(request: NextRequest) {
   const provider = params.get("provider");
   const runId = params.get("runId");
 
-  const events = mockDb
-    .getEvents()
-    .filter((event) => (agentId ? event.agentId === agentId : true))
-    .filter((event) => (provider ? event.provider === provider : true))
-    .filter((event) => (runId ? event.runId === runId : true));
+  const events = await dataStore.listEvents({ agentId, provider, runId });
 
   return NextResponse.json({ events });
 }

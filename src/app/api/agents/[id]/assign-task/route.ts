@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 
 const AssignTaskSchema = z.object({
   task: z.string().min(1),
@@ -20,7 +20,7 @@ export async function POST(
       return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
     }
 
-    const updated = mockDb.updateAgent(id, {
+    const updated = await dataStore.updateAgent(id, {
       status: "thinking",
       currentTask: parsed.data.task,
       progress: 5,

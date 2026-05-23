@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 
 export async function GET() {
-  return NextResponse.json({ runs: mockDb.getRuns() });
+  const runs = await dataStore.listRuns();
+  return NextResponse.json({ runs });
 }

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AgentCreateSchema } from "@/lib/schemas";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 
 export async function GET() {
-  return NextResponse.json({ agents: mockDb.getAgents() });
+  const agents = await dataStore.listAgents();
+  return NextResponse.json({ agents });
 }
 
 export async function POST(request: NextRequest) {
@@ -17,9 +18,9 @@ export async function POST(request: NextRequest) {
 
     const now = new Date().toISOString();
 
-    const agent = mockDb.addAgent({
+    const agent = await dataStore.createAgent({
       id: `agent_${Date.now()}`,
-      workspaceId: "ws_demo",
+      workspaceId: dataStore.workspaceId,
       providerConnectionId: parsed.data.providerConnectionId,
       name: parsed.data.name,
       role: parsed.data.role,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AgentPatchSchema } from "@/lib/schemas";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 
 export async function PATCH(
   request: NextRequest,
@@ -16,7 +16,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
     }
 
-    const updated = mockDb.updateAgent(id, parsed.data);
+    const updated = await dataStore.updateAgent(id, parsed.data);
     if (!updated) return NextResponse.json({ error: "Agent not found" }, { status: 404 });
 
     return NextResponse.json({ agent: updated });

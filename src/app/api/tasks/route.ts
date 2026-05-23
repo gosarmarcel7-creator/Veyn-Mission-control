@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { TaskCreateSchema } from "@/lib/schemas";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 
 export async function GET() {
-  return NextResponse.json({ tasks: mockDb.getTasks() });
+  const tasks = await dataStore.listTasks();
+  return NextResponse.json({ tasks });
 }
 
 export async function POST(request: NextRequest) {
@@ -16,9 +17,9 @@ export async function POST(request: NextRequest) {
     }
 
     const now = new Date().toISOString();
-    const task = mockDb.addTask({
+    const task = await dataStore.createTask({
       id: `task_${Date.now()}`,
-      workspaceId: "ws_demo",
+      workspaceId: dataStore.workspaceId,
       title: parsed.data.title,
       description: parsed.data.description,
       status: "queued",

@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 
 export async function GET() {
-  const agents = mockDb.getAgents();
-  const runs = mockDb.getRuns();
-  const events = mockDb.getEvents();
-  const providerConnections = mockDb.getConnections();
+  const [agents, runs, events, providerConnections] = await Promise.all([
+    dataStore.listAgents(),
+    dataStore.listRuns(),
+    dataStore.listEvents(),
+    dataStore.listConnections(),
+  ]);
 
   const totalTokens = agents.reduce((sum, agent) => sum + agent.tokensUsed, 0);
   const totalCostUsd = agents.reduce((sum, agent) => sum + agent.costUsd, 0);
@@ -22,7 +24,7 @@ export async function GET() {
   return NextResponse.json({
     totalTokens,
     totalCostUsd,
-    runsToday: runs.filter((run) => run.startedAt.startsWith("2026-05-23")).length,
+    runsToday: runs.filter((run) => run.startedAt.startsWith(new Date().toISOString().slice(0, 10))).length,
     activeAgents,
     blockedTimePct,
     failureRatePct,

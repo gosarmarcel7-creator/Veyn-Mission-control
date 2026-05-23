@@ -7,6 +7,7 @@ import { BottomTimeline } from "./BottomTimeline";
 import { CommandMenu } from "@/components/command/CommandMenu";
 import { useRoomStore } from "@/lib/store";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useProductionSync } from "@/hooks/useProductionSync";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -15,6 +16,8 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, showSidebars = false, showTimeline = false }: AppShellProps) {
+  useProductionSync();
+
   const {
     leftSidebarOpen,
     rightSidebarOpen,

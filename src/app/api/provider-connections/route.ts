@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ProviderConnectionSchema } from "@/lib/schemas";
-import { mockDb } from "@/lib/mock-db";
+import { dataStore } from "@/lib/data-store";
 
 function fakeEncrypt(secret: string) {
   return `enc_ref_${Buffer.from(secret.slice(0, 8)).toString("base64")}`;
 }
 
 export async function GET() {
-  return NextResponse.json({ connections: mockDb.getConnections() });
+  const connections = await dataStore.listConnections();
+  return NextResponse.json({ connections });
 }
 
 export async function POST(request: NextRequest) {
@@ -21,9 +22,9 @@ export async function POST(request: NextRequest) {
 
     const secret = parsed.data.apiKey ?? parsed.data.webhookSecret;
 
-    const connection = mockDb.addConnection({
+    const connection = await dataStore.createConnection({
       id: `conn_${Date.now()}`,
-      workspaceId: "ws_demo",
+      workspaceId: dataStore.workspaceId,
       provider: parsed.data.provider,
       authType: parsed.data.authType,
       displayName: parsed.data.displayName,

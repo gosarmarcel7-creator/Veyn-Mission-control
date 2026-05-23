@@ -19,8 +19,7 @@ import type {
   Task,
   Workspace,
 } from "./types";
-
-const DEMO_MODE_ENABLED = process.env.NEXT_PUBLIC_VEYN_DEMO_MODE !== "false";
+import { DEMO_MODE_ENABLED } from "./env";
 
 interface RoomSettings {
   showLabels: boolean;
@@ -49,7 +48,9 @@ interface TimelineFilters {
 interface RoomStore {
   workspace: Workspace;
   providerConnections: ProviderConnection[];
+  setProviderConnections: (providerConnections: ProviderConnection[]) => void;
   runs: Run[];
+  setRuns: (runs: Run[]) => void;
 
   agents: Agent[];
   setAgents: (agents: Agent[]) => void;
@@ -128,7 +129,9 @@ function statusEventType(status: AgentStatus): AgentEvent["eventType"] {
 export const useRoomStore = create<RoomStore>((set, get) => ({
   workspace: DEMO_WORKSPACE,
   providerConnections: DEMO_CONNECTIONS,
+  setProviderConnections: (providerConnections) => set({ providerConnections }),
   runs: DEMO_RUNS,
+  setRuns: (runs) => set({ runs }),
 
   agents: DEMO_AGENTS,
   setAgents: (agents) => set({ agents }),
