@@ -12,7 +12,7 @@ export function FloatingAgentLabel({ agent, selected, visible }: FloatingAgentLa
   if (!visible) return null;
 
   return (
-    <Html position={[0, 2.45, 0]} center distanceFactor={10} transform occlude={false}>
+    <Html position={[0, 2.45, 0]} center occlude={false}>
       <div
         className="pointer-events-none rounded-md border px-2 py-1.5 shadow-2xl backdrop-blur"
         style={{

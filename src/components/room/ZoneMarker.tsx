@@ -13,7 +13,7 @@ export function ZoneMarker({ label, position, color }: ZoneMarkerProps) {
         <planeGeometry args={[2.2, 0.62]} />
         <meshStandardMaterial color={color} transparent opacity={0.12} />
       </mesh>
-      <Html position={[0, 0.18, 0]} center distanceFactor={18} transform>
+      <Html position={[0, 0.18, 0]} center>
         <div
           className="rounded-md border px-2 py-1 text-[10px] font-medium uppercase tracking-wide"
           style={{
