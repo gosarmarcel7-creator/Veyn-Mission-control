@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useGLTF } from "@react-three/drei";
+import * as THREE from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { RoomObject } from "./RoomObject";
 import { MonitorScreen } from "./MonitorScreen";
@@ -44,9 +45,31 @@ function useAssetExists(path: string) {
 
 function RoomAssetModel() {
   const gltf = useGLTF(ROOM_MODEL_PATH);
-  const scene = useMemo(() => clone(gltf.scene), [gltf.scene]);
+  const scene = useMemo(() => {
+    const cloned = clone(gltf.scene);
+    const bounds = new THREE.Box3().setFromObject(cloned);
+    const center = bounds.getCenter(new THREE.Vector3());
+    const min = bounds.min.clone();
+    const size = bounds.getSize(new THREE.Vector3());
 
-  return <primitive object={scene} scale={1.2} position={[0, -0.01, 0]} castShadow receiveShadow />;
+    const targetSpan = 15;
+    const maxSpan = Math.max(size.x, size.z, 1);
+    const uniformScale = targetSpan / maxSpan;
+
+    cloned.position.set(-center.x, -min.y, -center.z);
+    cloned.scale.setScalar(uniformScale);
+
+    cloned.traverse((object) => {
+      if (object instanceof THREE.Mesh) {
+        object.castShadow = true;
+        object.receiveShadow = true;
+      }
+    });
+
+    return cloned;
+  }, [gltf.scene]);
+
+  return <primitive object={scene} />;
 }
 
 function DeskCluster({ baseX, baseZ, count = 2, tone = "cyan" }: { baseX: number; baseZ: number; count?: number; tone?: "cyan" | "blue" | "amber" | "green" }) {
