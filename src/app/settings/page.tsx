@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 
 export default function SettingsPage() {
-  const { workspace, providerConnections } = useRoomStore();
+  const { workspace, providerConnections, isDemoMode, setDemoMode } = useRoomStore();
 
   return (
     <AppShell>
@@ -28,6 +28,23 @@ export default function SettingsPage() {
         </header>
 
         <div className="space-y-5">
+          <section className="rounded-xl border border-white/10 bg-[#0f1622] p-4">
+            <h2 className="text-lg font-semibold text-white">Demo data</h2>
+            <div className="mt-3 flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2">
+              <div>
+                <p className="text-sm text-white">Show simulated demo agents</p>
+                <p className="text-xs text-slate-400">Turn off to use real provider connections and synced agents only.</p>
+              </div>
+              <Switch
+                checked={isDemoMode}
+                onCheckedChange={(checked) => {
+                  setDemoMode(checked);
+                  toast.success(checked ? "Demo mode enabled." : "Demo mode disabled. Syncing production data.");
+                }}
+              />
+            </div>
+          </section>
+
           <section className="rounded-xl border border-white/10 bg-[#0f1622] p-4">
             <h2 className="text-lg font-semibold text-white">Workspace</h2>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">

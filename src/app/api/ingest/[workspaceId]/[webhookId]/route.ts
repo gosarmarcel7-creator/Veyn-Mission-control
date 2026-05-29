@@ -53,6 +53,17 @@ export async function POST(
     timestamp: validated.data.timestamp ?? new Date().toISOString(),
   });
 
+  const provider = validated.data.provider ?? "custom_webhook";
+  const upsertedAgent = await dataStore.upsertAgentFromEvent({
+    agentId: normalized.agentId,
+    agentName: validated.data.agentName,
+    role: validated.data.role,
+    model: validated.data.model,
+    provider,
+    status: validated.data.status,
+    eventType: validated.data.eventType ?? normalized.eventType,
+  });
+
   const stored = await dataStore.addEvent(normalized);
 
   const updatedAgent = await dataStore.updateAgent(normalized.agentId, {
@@ -85,5 +96,8 @@ export async function POST(
     note: "Realtime broadcasting is stubbed. Wire this to Supabase Realtime, SSE, or WebSocket in production.",
   };
 
-  return NextResponse.json({ success: true, event: stored, updatedAgent, broadcast }, { status: 202 });
+  return NextResponse.json(
+    { success: true, event: stored, agent: updatedAgent ?? upsertedAgent, broadcast },
+    { status: 202 }
+  );
 }

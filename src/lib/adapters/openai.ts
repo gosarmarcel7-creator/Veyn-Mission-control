@@ -1,5 +1,29 @@
-import type { ProviderAdapter, ConnectionTestResult } from "./base";
+import type { ProviderAdapter, ConnectionTestResult, ExternalAgent } from "./base";
 import type { ProviderConnection, AgentEvent } from "../types";
+
+function getApiKey(connection: ProviderConnection): string | null {
+  const key = connection.metadata?.apiKey;
+  return typeof key === "string" && key.length > 0 ? key : null;
+}
+
+async function openaiFetch(connection: ProviderConnection, path: string) {
+  const apiKey = getApiKey(connection);
+  if (!apiKey) throw new Error("No API key stored for this connection.");
+
+  const response = await fetch(`https://api.openai.com/v1${path}`, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`OpenAI API error (${response.status}): ${body.slice(0, 200)}`);
+  }
+
+  return response.json() as Promise<Record<string, unknown>>;
+}
 
 export const OpenAIAdapter: ProviderAdapter = {
   id: "openai",
@@ -7,12 +31,33 @@ export const OpenAIAdapter: ProviderAdapter = {
   authTypes: ["api_key"],
 
   async testConnection(connection: ProviderConnection): Promise<ConnectionTestResult> {
-    void connection;
-    return {
-      success: false,
-      message: "Demo mode: add a real OpenAI API key in production to run a live connection test.",
-      latencyMs: 0,
-    };
+    const start = Date.now();
+    try {
+      await openaiFetch(connection, "/models");
+      return {
+        success: true,
+        message: "OpenAI API key is valid.",
+        latencyMs: Date.now() - start,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Connection test failed.",
+        latencyMs: Date.now() - start,
+      };
+    }
+  },
+
+  async listAgents(connection: ProviderConnection): Promise<ExternalAgent[]> {
+    const payload = await openaiFetch(connection, "/assistants?limit=50");
+    const data = (payload.data as Array<Record<string, unknown>>) ?? [];
+
+    return data.map((assistant) => ({
+      id: `openai_${String(assistant.id)}`,
+      name: String(assistant.name ?? assistant.id ?? "Assistant"),
+      model: assistant.model ? String(assistant.model) : "GPT-4.1",
+      status: "idle",
+    }));
   },
 
   normalizeEvent(raw: unknown): AgentEvent {

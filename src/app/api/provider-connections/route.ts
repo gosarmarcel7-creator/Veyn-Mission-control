@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ProviderConnectionSchema } from "@/lib/schemas";
 import { dataStore } from "@/lib/data-store";
-
-function fakeEncrypt(secret: string) {
-  return `enc_ref_${Buffer.from(secret.slice(0, 8)).toString("base64")}`;
-}
+import { maskSecretRef } from "@/lib/secrets";
 
 export async function GET() {
   const connections = await dataStore.listConnections();
@@ -22,17 +19,20 @@ export async function POST(request: NextRequest) {
 
     const secret = parsed.data.apiKey ?? parsed.data.webhookSecret;
 
-    const connection = await dataStore.createConnection({
-      id: `conn_${Date.now()}`,
-      workspaceId: dataStore.workspaceId,
-      provider: parsed.data.provider,
-      authType: parsed.data.authType,
-      displayName: parsed.data.displayName,
-      status: "connected",
-      lastSyncedAt: new Date().toISOString(),
-      encryptedSecretRef: secret ? fakeEncrypt(secret) : undefined,
-      metadata: parsed.data.metadata,
-    });
+    const connection = await dataStore.createConnection(
+      {
+        id: `conn_${Date.now()}`,
+        workspaceId: dataStore.workspaceId,
+        provider: parsed.data.provider,
+        authType: parsed.data.authType,
+        displayName: parsed.data.displayName,
+        status: "connected",
+        lastSyncedAt: new Date().toISOString(),
+        encryptedSecretRef: secret ? maskSecretRef(secret) : undefined,
+        metadata: parsed.data.metadata,
+      },
+      secret
+    );
 
     return NextResponse.json({ connection }, { status: 201 });
   } catch {

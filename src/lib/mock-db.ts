@@ -17,6 +17,7 @@ const state: {
   runs: Run[];
   events: AgentEvent[];
   webhookSecrets: Record<string, string>;
+  connectionSecrets: Record<string, string>;
 } = {
   workspaceId: DEMO_WORKSPACE.id,
   providerConnections: [...DEMO_CONNECTIONS],
@@ -27,19 +28,35 @@ const state: {
   webhookSecrets: {
     [`${DEMO_WORKSPACE.id}:wh_demo`]: "whsec_demo_2f8cf7c1",
   },
+  connectionSecrets: {},
 };
 
 export const mockDb = {
   getConnections: () => state.providerConnections,
-  addConnection: (connection: ProviderConnection) => {
+  addConnection: (connection: ProviderConnection, secret?: string) => {
     state.providerConnections = [connection, ...state.providerConnections];
+    if (secret) {
+      state.connectionSecrets[connection.id] = secret;
+    }
     return connection;
   },
+  updateConnection: (connectionId: string, updates: Partial<ProviderConnection>) => {
+    const existing = state.providerConnections.find((c) => c.id === connectionId);
+    if (!existing) return null;
+    const updated = { ...existing, ...updates };
+    state.providerConnections = state.providerConnections.map((c) =>
+      c.id === connectionId ? updated : c
+    );
+    return updated;
+  },
+  getConnectionSecret: (connectionId: string) => state.connectionSecrets[connectionId] ?? null,
   deleteConnection: (connectionId: string) => {
     state.providerConnections = state.providerConnections.filter((connection) => connection.id !== connectionId);
+    delete state.connectionSecrets[connectionId];
   },
 
   getAgents: () => state.agents,
+  getAgent: (agentId: string) => state.agents.find((agent) => agent.id === agentId) ?? null,
   addAgent: (agent: Agent) => {
     state.agents = [agent, ...state.agents];
     return agent;

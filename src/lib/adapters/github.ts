@@ -1,18 +1,56 @@
 import type { ProviderAdapter, ConnectionTestResult } from "./base";
 import type { ProviderConnection, AgentEvent } from "../types";
 
+function getApiKey(connection: ProviderConnection): string | null {
+  const key = connection.metadata?.apiKey;
+  return typeof key === "string" && key.length > 0 ? key : null;
+}
+
 export const GitHubAdapter: ProviderAdapter = {
   id: "github",
   name: "GitHub",
   authTypes: ["oauth", "api_key"],
 
   async testConnection(connection: ProviderConnection): Promise<ConnectionTestResult> {
-    void connection;
-    return {
-      success: false,
-      message: "Demo mode: configure GitHub OAuth in production to run live repository tests.",
-      latencyMs: 0,
-    };
+    const start = Date.now();
+    const apiKey = getApiKey(connection);
+    if (!apiKey) {
+      return {
+        success: false,
+        message: "No GitHub token stored. Connect with a personal access token.",
+        latencyMs: 0,
+      };
+    }
+
+    try {
+      const response = await fetch("https://api.github.com/user", {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          Accept: "application/vnd.github+json",
+        },
+      });
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: `GitHub API error (${response.status}).`,
+          latencyMs: Date.now() - start,
+        };
+      }
+
+      const user = (await response.json()) as { login?: string };
+      return {
+        success: true,
+        message: `Connected as ${user.login ?? "GitHub user"}. Agents sync via webhooks.`,
+        latencyMs: Date.now() - start,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Connection test failed.",
+        latencyMs: Date.now() - start,
+      };
+    }
   },
 
   normalizeEvent(raw: unknown): AgentEvent {

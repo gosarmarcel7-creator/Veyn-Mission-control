@@ -120,7 +120,13 @@ export function LeftSidebar() {
 
       {isDemoMode && (
         <div className="mx-4 mt-3 rounded-lg border border-sky-500/25 bg-sky-500/10 px-3 py-2 text-xs text-sky-100">
-          Demo Mode - Connect a provider to use real agents.
+          Demo mode is on — simulated agents are shown. Disable in Settings to use synced providers.
+        </div>
+      )}
+
+      {!isDemoMode && agents.length === 0 && (
+        <div className="mx-4 mt-3 rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+          No agents yet. Connect a provider and sync, or send a signed webhook event.
         </div>
       )}
 
@@ -147,7 +153,7 @@ export function LeftSidebar() {
 
           {grouped.length === 0 && (
             <div className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-4 text-center text-sm text-slate-400">
-              No agents match this filter.
+              {agents.length === 0 ? "No agents yet." : "No agents match this filter."}
             </div>
           )}
         </div>

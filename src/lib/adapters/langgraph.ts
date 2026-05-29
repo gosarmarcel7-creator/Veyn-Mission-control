@@ -18,8 +18,8 @@ export const LangGraphAdapter: ProviderAdapter = {
   async testConnection(connection: ProviderConnection): Promise<ConnectionTestResult> {
     void connection;
     return {
-      success: false,
-      message: "Demo mode: send webhook events or connect credentials in production for a live test.",
+      success: true,
+      message: "LangGraph is configured for webhook ingest. Send signed events to register agents.",
       latencyMs: 0,
     };
   },

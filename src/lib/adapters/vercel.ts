@@ -7,12 +7,39 @@ export const VercelAdapter: ProviderAdapter = {
   authTypes: ["oauth", "api_key"],
 
   async testConnection(connection: ProviderConnection): Promise<ConnectionTestResult> {
-    void connection;
-    return {
-      success: false,
-      message: "Demo mode: configure Vercel OAuth in production to run live deployment checks.",
-      latencyMs: 0,
-    };
+    const token = connection.metadata?.apiKey;
+    if (typeof token !== "string" || !token.length) {
+      return {
+        success: false,
+        message: "No Vercel token stored. Add an API token to test the connection.",
+        latencyMs: 0,
+      };
+    }
+
+    const start = Date.now();
+    try {
+      const response = await fetch("https://api.vercel.com/v2/user", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        return {
+          success: false,
+          message: `Vercel API error (${response.status}).`,
+          latencyMs: Date.now() - start,
+        };
+      }
+      return {
+        success: true,
+        message: "Vercel token is valid. Agents sync via deployment webhooks.",
+        latencyMs: Date.now() - start,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Connection test failed.",
+        latencyMs: Date.now() - start,
+      };
+    }
   },
 
   normalizeEvent(raw: unknown): AgentEvent {

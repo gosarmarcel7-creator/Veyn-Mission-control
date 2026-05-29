@@ -127,9 +127,22 @@ function AgentActions({ agentId }: { agentId: string }) {
           <Route className="mr-1.5 h-3.5 w-3.5" />
           Redirect
         </Button>
-        <Button size="sm" variant="outline" className="justify-start border-white/15 bg-white/[0.03]" onClick={() => toast.info("Opening logs view.")}>
+        <Button
+          size="sm"
+          variant="outline"
+          className="justify-start border-white/15 bg-white/[0.03]"
+          onClick={() => {
+            if (typeof window !== "undefined" && window.veyn?.terminal.isDesktop()) {
+              import("@/lib/terminal-actions").then(({ spawnTerminalSession }) => {
+                void spawnTerminalSession(`${agent.name} shell`);
+              });
+              return;
+            }
+            toast.info("Open the desktop app for local terminal shells.");
+          }}
+        >
           <TerminalSquare className="mr-1.5 h-3.5 w-3.5" />
-          View Logs
+          Open terminal
         </Button>
         <Button
           size="sm"

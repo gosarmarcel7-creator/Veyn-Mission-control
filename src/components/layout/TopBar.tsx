@@ -11,8 +11,11 @@ import {
   PanelRight,
   Search,
   Settings,
+  TerminalSquare,
   Users,
 } from "lucide-react";
+import { spawnTerminalSession } from "@/lib/terminal-actions";
+import { isElectronDesktop } from "@/lib/terminal-store";
 import { useRoomStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { VeynMark } from "@/components/brand/VeynMark";
@@ -129,6 +132,24 @@ export function TopBar({ showSidebars = false }: TopBarProps) {
             Command
             <span className="ml-2 rounded border border-white/20 px-1 font-mono text-[10px]">⌘K</span>
           </Button>
+
+          {pathname === "/room" && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 border-white/15 bg-white/5 text-slate-200"
+              onClick={() => {
+                if (!isElectronDesktop()) {
+                  window.location.href = "/room";
+                  return;
+                }
+                void spawnTerminalSession();
+              }}
+            >
+              <TerminalSquare className="mr-1.5 h-3.5 w-3.5" />
+              New terminal
+            </Button>
+          )}
 
           <Button asChild variant="outline" size="sm" className="h-8 border-white/15 bg-white/5 text-slate-200">
             <Link href="/app/integrations">

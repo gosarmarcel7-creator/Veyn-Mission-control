@@ -1,18 +1,59 @@
 import type { ProviderAdapter, ConnectionTestResult } from "./base";
 import type { ProviderConnection, AgentEvent } from "../types";
 
+function getApiKey(connection: ProviderConnection): string | null {
+  const key = connection.metadata?.apiKey;
+  return typeof key === "string" && key.length > 0 ? key : null;
+}
+
 export const AnthropicAdapter: ProviderAdapter = {
   id: "anthropic",
   name: "Anthropic / Claude",
   authTypes: ["api_key"],
 
   async testConnection(connection: ProviderConnection): Promise<ConnectionTestResult> {
-    void connection;
-    return {
-      success: false,
-      message: "Demo mode: add a real Anthropic API key in production to run a live connection test.",
-      latencyMs: 0,
-    };
+    const start = Date.now();
+    const apiKey = getApiKey(connection);
+    if (!apiKey) {
+      return { success: false, message: "No API key stored for this connection.", latencyMs: 0 };
+    }
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "claude-3-5-haiku-20241022",
+          max_tokens: 1,
+          messages: [{ role: "user", content: "ping" }],
+        }),
+      });
+
+      if (response.ok || response.status === 400) {
+        return {
+          success: true,
+          message: "Anthropic API key is valid.",
+          latencyMs: Date.now() - start,
+        };
+      }
+
+      const body = await response.text();
+      return {
+        success: false,
+        message: `Anthropic API error (${response.status}): ${body.slice(0, 160)}`,
+        latencyMs: Date.now() - start,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Connection test failed.",
+        latencyMs: Date.now() - start,
+      };
+    }
   },
 
   normalizeEvent(raw: unknown): AgentEvent {

@@ -11,8 +11,11 @@ import {
   Users,
   Waves,
   Link2,
+  TerminalSquare,
 } from "lucide-react";
 import { toast } from "sonner";
+import { spawnTerminalSession } from "@/lib/terminal-actions";
+import { isElectronDesktop } from "@/lib/terminal-store";
 import { useRoomStore } from "@/lib/store";
 import {
   CommandDialog,
@@ -60,6 +63,24 @@ export function CommandMenu() {
         <CommandEmpty>No command found.</CommandEmpty>
 
         <CommandGroup heading="Quick Actions">
+          <CommandItem
+            onSelect={() =>
+              execute(() => {
+                if (!isElectronDesktop()) {
+                  toast.info("Install the Veyn desktop app to use local terminals.");
+                  router.push("/room");
+                  return;
+                }
+                void spawnTerminalSession();
+                router.push("/room");
+                toast.success("Terminal opened.");
+              })
+            }
+          >
+            <TerminalSquare className="mr-2 h-4 w-4" />
+            New terminal
+          </CommandItem>
+
           <CommandItem
             onSelect={() =>
               execute(() => {

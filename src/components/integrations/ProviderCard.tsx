@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Circle, PlugZap, TriangleAlert } from "lucide-react";
+import { CheckCircle2, Circle, PlugZap, RefreshCw, TriangleAlert } from "lucide-react";
 import type { ProviderConnection, ProviderDefinition } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { ApiKeyModal } from "./ApiKeyModal";
 import { WebhookModal } from "./WebhookModal";
 import { toast } from "sonner";
+import { useRoomStore } from "@/lib/store";
+import { fetchProductionSnapshot, syncProviderConnection } from "@/lib/sync-client";
 
 interface ProviderCardProps {
   provider: ProviderDefinition;
@@ -25,6 +27,8 @@ function statusIcon(status: ProviderConnection["status"] | undefined) {
 export function ProviderCard({ provider, connection }: ProviderCardProps) {
   const [keyModalOpen, setKeyModalOpen] = useState(false);
   const [webhookModalOpen, setWebhookModalOpen] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const { isDemoMode, setDemoMode, setAgents, setProviderConnections } = useRoomStore();
 
   const openPrimary = () => {
     if (provider.authType === "api_key") {
@@ -37,7 +41,28 @@ export function ProviderCard({ provider, connection }: ProviderCardProps) {
       return;
     }
 
-    toast.info(`${provider.name} OAuth is stubbed in demo mode.`);
+    toast.info(`${provider.name} OAuth is not configured yet.`);
+  };
+
+  const syncNow = async () => {
+    if (!connection) {
+      toast.info("Connect this provider first.");
+      return;
+    }
+
+    setSyncing(true);
+    try {
+      if (isDemoMode) setDemoMode(false);
+      const result = await syncProviderConnection(connection.id);
+      const snapshot = await fetchProductionSnapshot();
+      if (snapshot.agents) setAgents(snapshot.agents);
+      if (snapshot.connections) setProviderConnections(snapshot.connections);
+      toast.success(result.message ?? `Synced ${result.synced ?? 0} agent(s).`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Sync failed.");
+    } finally {
+      setSyncing(false);
+    }
   };
 
   return (
@@ -76,15 +101,27 @@ export function ProviderCard({ provider, connection }: ProviderCardProps) {
           <PlugZap className="mr-1.5 h-4 w-4" />
           {connection ? "Manage" : "Connect"}
         </Button>
-        {provider.authType === "oauth" && (
-          <Button variant="outline" className="border-white/20 bg-white/[0.02]" onClick={() => toast.info("OAuth flow stub")}>OAuth</Button>
+        {connection && (
+          <Button
+            variant="outline"
+            className="border-white/20 bg-white/[0.02]"
+            onClick={syncNow}
+            disabled={syncing}
+          >
+            <RefreshCw className={cn("mr-1.5 h-4 w-4", syncing && "animate-spin")} />
+            Sync
+          </Button>
         )}
       </div>
 
-      <p className="mt-3 text-xs text-slate-400">Keys are encrypted and used only server-side. They are never exposed in the browser.</p>
+      <p className="mt-3 text-xs text-slate-400">
+        {provider.authType === "webhook"
+          ? "Agents appear when signed events hit your ingest URL."
+          : "Sync pulls remote agents where the provider API supports listing."}
+      </p>
 
       <ApiKeyModal provider={{ id: provider.id, name: provider.name }} open={keyModalOpen} onClose={() => setKeyModalOpen(false)} />
       <WebhookModal provider={{ id: provider.id, name: provider.name }} open={webhookModalOpen} onClose={() => setWebhookModalOpen(false)} />
     </article>
   );
-}
+};

@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useRoomStore } from "@/lib/store";
+import { fetchProductionSnapshot, syncProviderConnection } from "@/lib/sync-client";
 
 interface ApiKeyModalProps {
   provider: { id: string; name: string };
@@ -21,12 +23,24 @@ interface ApiKeyModalProps {
 }
 
 export function ApiKeyModal({ provider, open, onClose }: ApiKeyModalProps) {
+  const { isDemoMode, setDemoMode, setAgents, setTasks, setRuns, setEvents, setProviderConnections } =
+    useRoomStore();
+
   const [nickname, setNickname] = useState(`${provider.name} Production`);
   const [apiKey, setApiKey] = useState("");
   const [scope, setScope] = useState("workspace");
   const [showKey, setShowKey] = useState(false);
   const [busy, setBusy] = useState(false);
   const [connectionId, setConnectionId] = useState<string | null>(null);
+
+  const refreshStore = async () => {
+    const snapshot = await fetchProductionSnapshot();
+    if (snapshot.agents) setAgents(snapshot.agents);
+    if (snapshot.tasks) setTasks(snapshot.tasks);
+    if (snapshot.runs) setRuns(snapshot.runs);
+    if (snapshot.events) setEvents(snapshot.events);
+    if (snapshot.connections) setProviderConnections(snapshot.connections);
+  };
 
   const saveConnection = async () => {
     if (!apiKey.trim()) {
@@ -54,8 +68,25 @@ export function ApiKeyModal({ provider, open, onClose }: ApiKeyModalProps) {
         return;
       }
 
-      setConnectionId(payload.connection?.id ?? null);
-      toast.success("Connection saved.");
+      const id = payload.connection?.id ?? null;
+      setConnectionId(id);
+
+      if (isDemoMode) setDemoMode(false);
+
+      if (id) {
+        try {
+          const syncResult = await syncProviderConnection(id);
+          toast.success(syncResult.message ?? "Connection saved and synced.");
+        } catch (error) {
+          toast.success("Connection saved.");
+          toast.info(error instanceof Error ? error.message : "Sync will retry from integrations.");
+        }
+      } else {
+        toast.success("Connection saved.");
+      }
+
+      await refreshStore();
+      onClose();
     } catch {
       toast.error("Failed to save connection.");
     } finally {
@@ -79,7 +110,7 @@ export function ApiKeyModal({ provider, open, onClose }: ApiKeyModalProps) {
       if (payload.success) {
         toast.success(payload.message ?? "Connection test succeeded.");
       } else {
-        toast.info(payload.message ?? "Connection test returned demo-mode status.");
+        toast.error(payload.message ?? "Connection test failed.");
       }
     } catch {
       toast.error("Failed to test connection.");
@@ -152,4 +183,4 @@ export function ApiKeyModal({ provider, open, onClose }: ApiKeyModalProps) {
       </DialogContent>
     </Dialog>
   );
-}
+};

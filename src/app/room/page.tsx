@@ -1,11 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Focus, Grid3X3, Orbit, Route, Scan } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { RoomCanvas } from "@/components/room/RoomCanvas";
+const TerminalWorkspace = dynamic(
+  () => import("@/components/terminal/TerminalWorkspace").then((m) => m.TerminalWorkspace),
+  { ssr: false }
+);
 import { useDemoSimulation } from "@/hooks/useDemoSimulation";
 import { useRoomStore } from "@/lib/store";
+import { useTerminalStore } from "@/lib/terminal-store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -20,14 +26,17 @@ export default function RoomPage() {
     setSelectedZone,
     isDemoMode,
   } = useRoomStore();
+  const { sessions } = useTerminalStore();
 
   const cameraMode = roomSettings.cameraMode;
+  const showAgents = sessions.length === 0;
 
   return (
     <AppShell showSidebars showTimeline>
       <div className="relative h-full w-full overflow-hidden">
-        <RoomCanvas />
+        {showAgents ? <RoomCanvas /> : <TerminalWorkspace />}
 
+        {showAgents && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -37,11 +46,18 @@ export default function RoomPage() {
           <p className="text-xs text-slate-200">Live spatial command center for multi-agent operations.</p>
           {isDemoMode && (
             <span className="rounded border border-sky-500/25 bg-sky-500/10 px-2 py-0.5 text-[11px] text-sky-100">
-              Demo Mode - Connect a provider to use real agents.
+              Demo mode
+            </span>
+          )}
+          {!showAgents && (
+            <span className="rounded border border-violet-500/25 bg-violet-500/10 px-2 py-0.5 text-[11px] text-violet-100">
+              Terminal active — close all tabs to return to the agent room
             </span>
           )}
         </motion.div>
+        )}
 
+        {showAgents && (
         <div className="absolute right-3 top-3 z-20 flex flex-wrap items-center gap-1.5 rounded-lg border border-white/15 bg-[#0c121d]/90 p-1.5 backdrop-blur">
           <Button
             size="icon"
@@ -125,6 +141,7 @@ export default function RoomPage() {
             {selectedZone ? "Clear zone focus" : "Focus zone"}
           </Button>
         </div>
+        )}
       </div>
     </AppShell>
   );

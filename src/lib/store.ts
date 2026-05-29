@@ -19,7 +19,7 @@ import type {
   Task,
   Workspace,
 } from "./types";
-import { DEMO_MODE_ENABLED } from "./env";
+import { DEMO_MODE_ENABLED, DESKTOP_MODE } from "./env";
 
 interface RoomSettings {
   showLabels: boolean;
@@ -303,7 +303,7 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
   currentRun: DEMO_RUN,
   setCurrentRun: (currentRun) => set({ currentRun }),
 
-  isDemoMode: DEMO_MODE_ENABLED,
+  isDemoMode: DESKTOP_MODE ? false : DEMO_MODE_ENABLED,
   setDemoMode: (isDemoMode) => set({ isDemoMode }),
 
   commandMenuOpen: false,

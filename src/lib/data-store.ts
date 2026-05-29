@@ -1,8 +1,12 @@
 import { randomUUID } from "crypto";
+import { buildAgentFromUpsert, type UpsertAgentFromEventInput } from "./agent-upsert";
+import { localDb } from "./local-db";
 import { mockDb } from "./mock-db";
 import { getSupabaseServerClient } from "./supabase-server";
-import { WORKSPACE_ID } from "./env";
+import { decryptSecret } from "./secrets";
+import { LOCAL_DB_ENABLED, WORKSPACE_ID } from "./env";
 import type { Agent, AgentEvent, ProviderConnection, Run, Task } from "./types";
+import type { ExternalAgent } from "./adapters/base";
 
 function nowIso() {
   return new Date().toISOString();
@@ -80,6 +84,15 @@ function fromEventRow(row: Record<string, unknown>): AgentEvent {
   };
 }
 
+function isLocalDbEnabled() {
+  return LOCAL_DB_ENABLED && localDb.isEnabled();
+}
+
+function isMemoryDbEnabled() {
+  const supabase = getSupabaseServerClient();
+  return !supabase && !isLocalDbEnabled();
+}
+
 function fromConnectionRow(row: Record<string, unknown>): ProviderConnection {
   return {
     id: String(row.id),
@@ -97,8 +110,24 @@ function fromConnectionRow(row: Record<string, unknown>): ProviderConnection {
 export const dataStore = {
   workspaceId: WORKSPACE_ID,
 
+  async getAgent(agentId: string) {
+    const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.getAgent(agentId);
+    if (!supabase) return mockDb.getAgent(agentId);
+
+    const { data, error } = await supabase
+      .from("agents")
+      .select("*")
+      .eq("workspace_id", WORKSPACE_ID)
+      .eq("id", agentId)
+      .maybeSingle();
+    if (error) throw error;
+    return data ? fromAgentRow(data) : null;
+  },
+
   async listAgents() {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.getAgents();
     if (!supabase) return mockDb.getAgents();
 
     const { data, error } = await supabase
@@ -110,8 +139,59 @@ export const dataStore = {
     return (data ?? []).map((row) => fromAgentRow(row));
   },
 
+  async upsertAgentFromEvent(input: UpsertAgentFromEventInput) {
+    const agents = await this.listAgents();
+    const existing = agents.find((a) => a.id === input.agentId) ?? null;
+    const agent = buildAgentFromUpsert(input, existing, agents.length);
+
+    if (existing) {
+      return this.updateAgent(input.agentId, agent);
+    }
+    return this.createAgent(agent);
+  },
+
+  async upsertAgentsFromExternal(
+    connection: ProviderConnection,
+    externalAgents: ExternalAgent[]
+  ) {
+    const results: Agent[] = [];
+    const agents = await this.listAgents();
+
+    for (let i = 0; i < externalAgents.length; i++) {
+      const ext = externalAgents[i];
+      const existing = agents.find((a) => a.id === ext.id) ?? null;
+      const agent = buildAgentFromUpsert(
+        {
+          agentId: ext.id,
+          agentName: ext.name,
+          model: "Custom",
+          provider: connection.provider === "custom_webhook" ? "custom" : connection.provider,
+          providerConnectionId: connection.id,
+          status: (ext.status as Agent["status"]) ?? "idle",
+        },
+        existing,
+        agents.length + i
+      );
+      if (existing) {
+        const updated = await this.updateAgent(ext.id, agent);
+        if (updated) results.push(updated);
+      } else {
+        const created = await this.createAgent(agent);
+        results.push(created);
+      }
+    }
+
+    await this.updateConnection(connection.id, {
+      lastSyncedAt: nowIso(),
+      status: "connected",
+    });
+
+    return results;
+  },
+
   async createAgent(input: Agent) {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.addAgent(input);
     if (!supabase) return mockDb.addAgent(input);
 
     const payload = {
@@ -142,6 +222,7 @@ export const dataStore = {
 
   async updateAgent(agentId: string, updates: Partial<Agent>) {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.updateAgent(agentId, updates);
     if (!supabase) return mockDb.updateAgent(agentId, updates);
 
     const patch: Record<string, unknown> = {
@@ -180,6 +261,7 @@ export const dataStore = {
 
   async listTasks() {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.getTasks();
     if (!supabase) return mockDb.getTasks();
     const { data, error } = await supabase
       .from("tasks")
@@ -192,6 +274,7 @@ export const dataStore = {
 
   async createTask(input: Task) {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.addTask(input);
     if (!supabase) return mockDb.addTask(input);
 
     const payload = {
@@ -213,6 +296,7 @@ export const dataStore = {
 
   async updateTask(taskId: string, updates: Partial<Task>) {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.updateTask(taskId, updates);
     if (!supabase) return mockDb.updateTask(taskId, updates);
 
     const patch: Record<string, unknown> = { updated_at: nowIso() };
@@ -235,6 +319,7 @@ export const dataStore = {
 
   async listRuns() {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.getRuns();
     if (!supabase) return mockDb.getRuns();
     const { data, error } = await supabase
       .from("runs")
@@ -247,6 +332,13 @@ export const dataStore = {
 
   async listEvents(filters?: { agentId?: string | null; provider?: string | null; runId?: string | null }) {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) {
+      return localDb
+        .getEvents()
+        .filter((event) => (filters?.agentId ? event.agentId === filters.agentId : true))
+        .filter((event) => (filters?.provider ? event.provider === filters.provider : true))
+        .filter((event) => (filters?.runId ? event.runId === filters.runId : true));
+    }
     if (!supabase) {
       return mockDb
         .getEvents()
@@ -273,6 +365,7 @@ export const dataStore = {
 
   async addEvent(event: AgentEvent) {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.addEvent(event);
     if (!supabase) return mockDb.addEvent(event);
 
     const payload = {
@@ -299,6 +392,7 @@ export const dataStore = {
 
   async listConnections() {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.getConnections();
     if (!supabase) return mockDb.getConnections();
     const { data, error } = await supabase
       .from("provider_connections")
@@ -309,9 +403,10 @@ export const dataStore = {
     return (data ?? []).map((row) => fromConnectionRow(row));
   },
 
-  async createConnection(input: ProviderConnection) {
+  async createConnection(input: ProviderConnection, plaintextSecret?: string) {
     const supabase = getSupabaseServerClient();
-    if (!supabase) return mockDb.addConnection(input);
+    if (isLocalDbEnabled()) return localDb.addConnection(input, plaintextSecret);
+    if (!supabase) return mockDb.addConnection(input, plaintextSecret);
 
     const payload = {
       id: input.id,
@@ -334,8 +429,46 @@ export const dataStore = {
     return fromConnectionRow(data);
   },
 
+  async updateConnection(connectionId: string, updates: Partial<ProviderConnection>) {
+    const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.updateConnection(connectionId, updates);
+    if (!supabase) return mockDb.updateConnection(connectionId, updates);
+
+    const patch: Record<string, unknown> = {};
+    if (updates.displayName !== undefined) patch.display_name = updates.displayName;
+    if (updates.status !== undefined) patch.status = updates.status;
+    if (updates.lastSyncedAt !== undefined) patch.last_synced_at = updates.lastSyncedAt ?? null;
+    if (updates.metadata !== undefined) patch.metadata = updates.metadata ?? null;
+
+    const { data, error } = await supabase
+      .from("provider_connections")
+      .update(patch)
+      .eq("workspace_id", WORKSPACE_ID)
+      .eq("id", connectionId)
+      .select("*")
+      .single();
+    if (error) return null;
+    return fromConnectionRow(data);
+  },
+
+  async getConnectionSecret(connectionId: string): Promise<string | null> {
+    const connections = await this.listConnections();
+    const connection = connections.find((c) => c.id === connectionId);
+    if (!connection) return null;
+
+    if (isLocalDbEnabled()) return localDb.getConnectionSecret(connectionId);
+    if (isMemoryDbEnabled()) return mockDb.getConnectionSecret(connectionId);
+
+    const decrypted = decryptSecret(connection.encryptedSecretRef);
+    return decrypted;
+  },
+
   async deleteConnection(connectionId: string) {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) {
+      localDb.deleteConnection(connectionId);
+      return;
+    }
     if (!supabase) {
       mockDb.deleteConnection(connectionId);
       return;
@@ -351,6 +484,7 @@ export const dataStore = {
 
   async getWebhookSecret(workspaceId: string, webhookId: string) {
     const supabase = getSupabaseServerClient();
+    if (isLocalDbEnabled()) return localDb.getWebhookSecret(workspaceId, webhookId);
     if (!supabase) return mockDb.getWebhookSecret(workspaceId, webhookId);
 
     const { data, error } = await supabase

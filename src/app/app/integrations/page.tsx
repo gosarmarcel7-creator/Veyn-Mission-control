@@ -6,7 +6,7 @@ import { useRoomStore } from "@/lib/store";
 import { PROVIDER_DEFINITIONS } from "@/lib/demo-data";
 
 export default function AppIntegrationsPage() {
-  const { providerConnections } = useRoomStore();
+  const { providerConnections, isDemoMode } = useRoomStore();
 
   return (
     <AppShell>
@@ -18,9 +18,15 @@ export default function AppIntegrationsPage() {
           </p>
         </header>
 
-        <div className="mb-4 rounded-lg border border-sky-500/25 bg-sky-500/10 px-3 py-2 text-sm text-sky-100">
-          Demo Mode - Connect a provider to use real agents.
-        </div>
+        {isDemoMode ? (
+          <div className="mb-4 rounded-lg border border-sky-500/25 bg-sky-500/10 px-3 py-2 text-sm text-sky-100">
+            Demo mode is on. Disable it in Settings after connecting providers to see synced agents.
+          </div>
+        ) : (
+          <div className="mb-4 rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2 text-sm text-slate-300">
+            Connect a provider, then use Sync. Webhook providers register agents when signed events are ingested.
+          </div>
+        )}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {PROVIDER_DEFINITIONS.map((provider) => (
