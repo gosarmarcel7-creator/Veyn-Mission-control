@@ -1,0 +1,64 @@
+
+> ai-agent-mission-control@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.101:3000
+✓ Ready in 320ms
+
+ GET / 200 in 2.0s (next.js: 1707ms, application-code: 325ms)
+ GET /login 200 in 339ms (next.js: 318ms, application-code: 21ms)
+ GET /room 200 in 2.2s (next.js: 1793ms, application-code: 371ms)
+ HEAD /models/agent-ops-room.glb 404 in 355ms (next.js: 237ms, application-code: 118ms)
+ HEAD /models/avatars/researcher.glb 404 in 410ms (next.js: 260ms, application-code: 150ms)
+ HEAD /models/avatars/researcher.glb 404 in 413ms (next.js: 278ms, application-code: 135ms)
+ HEAD /models/avatars/coder.glb 404 in 412ms (next.js: 293ms, application-code: 119ms)
+ HEAD /models/avatars/researcher.glb 404 in 417ms (next.js: 313ms, application-code: 103ms)
+ HEAD /models/avatars/manager.glb 404 in 421ms (next.js: 334ms, application-code: 87ms)
+ HEAD /models/avatars/coder.glb 404 in 109ms (next.js: 11ms, application-code: 97ms)
+ HEAD /models/avatars/coder.glb 404 in 187ms (next.js: 45ms, application-code: 142ms)
+ HEAD /models/avatars/coder.glb 404 in 186ms (next.js: 59ms, application-code: 128ms)
+ HEAD /models/avatars/reviewer.glb 404 in 186ms (next.js: 72ms, application-code: 115ms)
+ HEAD /models/avatars/coder.glb 404 in 190ms (next.js: 88ms, application-code: 102ms)
+ HEAD /models/avatars/reviewer.glb 404 in 206ms (next.js: 155ms, application-code: 51ms)
+ HEAD /models/avatars/reviewer.glb 404 in 124ms (next.js: 10ms, application-code: 114ms)
+ HEAD /models/avatars/deployment.glb 404 in 203ms (next.js: 46ms, application-code: 157ms)
+ HEAD /models/avatars/deployment.glb 404 in 203ms (next.js: 64ms, application-code: 139ms)
+ HEAD /models/avatars/support.glb 404 in 203ms (next.js: 80ms, application-code: 123ms)
+ HEAD /models/agent-ops-room.glb 404 in 203ms (next.js: 97ms, application-code: 106ms)
+ HEAD /models/avatars/manager.glb 404 in 205ms (next.js: 153ms, application-code: 52ms)
+ HEAD /models/avatars/researcher.glb 404 in 127ms (next.js: 10ms, application-code: 117ms)
+ HEAD /models/avatars/researcher.glb 404 in 180ms (next.js: 48ms, application-code: 132ms)
+ HEAD /models/avatars/researcher.glb 404 in 181ms (next.js: 66ms, application-code: 115ms)
+ HEAD /models/avatars/coder.glb 404 in 181ms (next.js: 82ms, application-code: 99ms)
+ HEAD /models/avatars/coder.glb 404 in 181ms (next.js: 101ms, application-code: 80ms)
+ HEAD /models/avatars/coder.glb 404 in 187ms (next.js: 140ms, application-code: 47ms)
+ HEAD /models/avatars/coder.glb 404 in 104ms (next.js: 21ms, application-code: 83ms)
+ HEAD /models/avatars/coder.glb 404 in 151ms (next.js: 43ms, application-code: 108ms)
+ HEAD /models/avatars/reviewer.glb 404 in 150ms (next.js: 63ms, application-code: 87ms)
+ HEAD /models/avatars/reviewer.glb 404 in 150ms (next.js: 77ms, application-code: 73ms)
+ HEAD /models/avatars/reviewer.glb 404 in 180ms (next.js: 125ms, application-code: 55ms)
+ HEAD /models/avatars/deployment.glb 404 in 174ms (next.js: 130ms, application-code: 45ms)
+ HEAD /models/avatars/deployment.glb 404 in 31ms (next.js: 6ms, application-code: 25ms)
+ HEAD /models/avatars/support.glb 404 in 55ms (next.js: 29ms, application-code: 26ms)
+ GET /dashboard 200 in 1068ms (next.js: 1032ms, application-code: 36ms)
+ GET /room 200 in 17ms (next.js: 2ms, application-code: 15ms)
+✓ Compiled in 855ms
+ GET /room 200 in 83ms (next.js: 50ms, application-code: 33ms)
+✓ Compiled in 55ms
+ GET /room 200 in 79ms (next.js: 51ms, application-code: 28ms)
+✓ Compiled in 67ms
+ GET /room 200 in 86ms (next.js: 47ms, application-code: 40ms)
+✓ Compiled in 55ms
+ GET /room 200 in 70ms (next.js: 44ms, application-code: 26ms)
+ GET / 200 in 249ms (next.js: 78ms, application-code: 171ms)
+ GET / 200 in 74ms (next.js: 3ms, application-code: 70ms)
+ GET / 200 in 70ms (next.js: 2ms, application-code: 68ms)
+ GET / 200 in 86ms (next.js: 3ms, application-code: 83ms)
+ GET / 200 in 77ms (next.js: 2ms, application-code: 74ms)
+ GET / 200 in 72ms (next.js: 2ms, application-code: 69ms)
+ GET /platform/analytics 404 in 48ms (next.js: 17ms, application-code: 31ms)
+ GET /platform/payments 404 in 30ms (next.js: 4ms, application-code: 26ms)
+ GET /platform/support 404 in 38ms (next.js: 3ms, application-code: 35ms)
+ GET /console 404 in 40ms (next.js: 4ms, application-code: 37ms)

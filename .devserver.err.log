@@ -1,0 +1,838 @@
+[browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/room" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="room/page.tsx">
+          <SegmentTrieNode>
+          <ClientPageRoot Component={function RoomPage} serverProvidedParams={{...}}>
+            <RoomPage params={Promise} searchParams={Promise}>
+              <AppShell showSidebars={true} showTimeline={true}>
+                <div className="flex h-scr...">
+                  <TopBar>
+                  <div>
+                  <BottomTimeline>
+                    <div className="border-t b...">
+                      <div className="flex flex-...">
+                        <div>
+                        <Button>
+                        <Button>
+                        <div className="flex min-w...">
+                          <span>
+                          <div className="group rela..." onClick={function onClick} onMouseMove={function onMouseMove}>
+                            <div>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span>
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.75879507804127%"
+-                               left: "99.7588%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.51759015608256%"
+-                               left: "99.5176%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.27638523412384%"
+-                               left: "99.2764%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "99.03518031216511%"
+-                               left: "99.0351%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.79397539020638%"
+-                               left: "98.7939%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.55277046824767%"
+-                               left: "98.5527%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            <span
+                              className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 bg-slate-300/80"
+                              style={{
++                               left: "98.31156554628895%"
+-                               left: "98.3115%"
+                              }}
+                            >
+                            ...
+                          ...
+                        ...
+                  ...
+        ...
+      ...
+ 
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLProgram: Program Info Log: (210,81-129): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision
+(209,37-61): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision
+(210,82-106): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision
+(209,37-61): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision
+(210,82-106): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision
+
+
+ 
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
