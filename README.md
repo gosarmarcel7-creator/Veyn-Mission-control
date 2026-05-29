@@ -217,7 +217,7 @@ RLS is enabled with service-role policies only; end-user Supabase Auth is not wi
 
 ### Vercel deployment
 
-The web app does not use `node-pty` (desktop-only). [`vercel.json`](vercel.json) runs `npm install --omit=optional` so native PTY bindings are skipped on Vercel. Local/desktop installs use a normal `npm install`, which includes `optionalDependencies`.
+The web app does not use `node-pty` (desktop-only). It is listed under `optionalDependencies` so a failed native compile on Vercel does not fail `npm install`. Do not use `npm install --omit=optional` on Vercel — that also skips `lightningcss` platform binaries required by Tailwind.
 
 ---
 

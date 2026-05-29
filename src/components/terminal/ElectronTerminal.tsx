@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import "@xterm/xterm/css/xterm.css";
 
 interface ElectronTerminalProps {
   sessionId: string;
@@ -18,6 +17,8 @@ export function ElectronTerminal({ sessionId, active }: ElectronTerminalProps) {
   useEffect(() => {
     const api = window.veyn?.terminal;
     if (!api || !containerRef.current) return;
+
+    void import("@xterm/xterm/css/xterm.css");
 
     const term = new Terminal({
       cursorBlink: true,
