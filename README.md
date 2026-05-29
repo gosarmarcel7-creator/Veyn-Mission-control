@@ -215,6 +215,10 @@ on conflict (id) do nothing;
 
 RLS is enabled with service-role policies only; end-user Supabase Auth is not wired in the app yet.
 
+### Vercel deployment
+
+The web app does not use `node-pty` (desktop-only). [`vercel.json`](vercel.json) runs `npm install --omit=optional` so native PTY bindings are skipped on Vercel. Local/desktop installs use a normal `npm install`, which includes `optionalDependencies`.
+
 ---
 
 ## HTTP API
