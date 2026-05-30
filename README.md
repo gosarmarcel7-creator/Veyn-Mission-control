@@ -4,13 +4,13 @@
 
 **Stack:** Next.js 16 (App Router, standalone output), React 19, TypeScript, Tailwind 4, React Three Fiber, Zustand, Supabase (optional), Electron + `node-pty` + xterm.js (desktop).
 
-Repository: [github.com/gosarmarcel7-creator/ai-agent-mission-control](https://github.com/gosarmarcel7-creator/ai-agent-mission-control)
+Repository: [https://github.com/gosarmarcel7-creator/Veyn-Mission-control](https://github.com/gosarmarcel7-creator/Veyn-Mission-control)
 
 ---
 
 ## Download (desktop)
 
-1. Open [GitHub Releases](https://github.com/gosarmarcel7-creator/ai-agent-mission-control/releases).
+1. Open [GitHub Releases](https://github.com/gosarmarcel7-creator/Veyn-Mission-control/releases).
 2. Download the installer for your OS (Windows NSIS `.exe`, macOS `.dmg`, Linux `AppImage`).
 3. Launch **Veyn**. No Supabase setup is required — the packaged app uses a local JSON database under your OS user data directory (`app.getPath('userData')`).
 
